@@ -50,17 +50,6 @@ export function DashboardHeader() {
       toast.error("Failed to log out. Please try again.");
     }
   };
-
-  const handleProfileUpdate = async (updatedData: any) => {
-    try {
-      await user?.update(updatedData);
-      toast.success("Profile updated successfully");
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error("Failed to update profile. Please try again.");
-    }
-  };
-
   const userInitials = user?.emailAddresses[0]?.emailAddress
     ? user.emailAddresses[0].emailAddress
         .split("@")[0]

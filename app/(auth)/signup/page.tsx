@@ -67,10 +67,10 @@ export default function SignupPage() {
 
       // Note: Sign-in is deferred until verification is complete
       // The user must submit the verification code on /verify-email
-    } catch (error: any) {
+    } catch (error) {
       console.error("Signup error:", error);
       const errorMessage =
-        error.errors?.[0]?.longMessage ||
+        (error as any).errors?.[0]?.longMessage ||
         "Failed to create account. Please try again.";
       toast.error(errorMessage);
     } finally {
@@ -98,7 +98,7 @@ export default function SignupPage() {
         // complete further steps.
         console.error(JSON.stringify(signUpAttempt, null, 2));
       }
-    } catch (err: any) {
+    } catch (err) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error(JSON.stringify(err, null, 2));
