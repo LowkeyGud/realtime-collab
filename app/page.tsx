@@ -1,5 +1,7 @@
+"use client";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@clerk/nextjs";
 import {
   ArrowRight,
   Calendar,
@@ -10,8 +12,14 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default function Home() {
+  const { isSignedIn, isLoaded } = useAuth();
+  if (!isLoaded) return null;
+  if (isSignedIn) {
+    redirect("/dashboard");
+  }
   return (
     <div className="flex flex-col min-h-screen">
       <header className="border-b">

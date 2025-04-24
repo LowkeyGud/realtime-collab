@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Layers } from "lucide-react";
+import { useClerk } from "@clerk/nextjs";
+import { Eye, EyeOff, Layers } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -16,7 +17,9 @@ import { toast } from "sonner";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { client, setActive } = useClerk();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,7 +28,15 @@ export default function LoginPage() {
 
     try {
       // throw new Error("This is a test error");
-      toast.success("You have been logged in up successfully.");
+      const signInAttempt = await client.signIn.create({
+        identifier: email,
+        password,
+      });
+      if (signInAttempt.status === "complete") {
+        await setActive({ session: signInAttempt.createdSessionId });
+      }
+
+      toast.success("You have been logged in successfully.");
       router.replace("/dashboard");
     } catch (error) {
       toast.error(
@@ -72,17 +83,30 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link href="/forgot-password" className="text-sm underline">
+                <Link href="/reset-password" className="text-sm underline">
                   Forgot your password?
                 </Link>
               </div>
-              <Input
-                id="password"
-                required
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  required
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox id="remember" />

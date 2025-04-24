@@ -2,6 +2,7 @@ import ErrorBoundary from "@/components/error-boundary";
 import { ThemeInitializer } from "@/components/theme-init";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import type React from "react";
@@ -15,7 +16,6 @@ export const metadata: Metadata = {
   keywords: "collaboration, real-time, document editing, team, workspace",
   authors: [{ name: "RealTime Collab Team" }],
   viewport: "width=device-width, initial-scale=1",
-  generator: "v0.dev",
 };
 
 export default function RootLayout({
@@ -28,10 +28,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <ThemeInitializer />
-          <ErrorBoundary>
-            {children}
-            <Toaster richColors />
-          </ErrorBoundary>
+          <ClerkProvider>
+            <ErrorBoundary>
+              {children}
+              <Toaster richColors />
+            </ErrorBoundary>
+          </ClerkProvider>
         </ThemeProvider>
       </body>
     </html>
