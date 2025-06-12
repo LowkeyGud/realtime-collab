@@ -1,10 +1,10 @@
-import ErrorBoundary from "@/components/error-boundary";
+import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { ThemeInitializer } from "@/components/theme-init";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/providers/theme-provider";
-import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type React from "react";
 import "./globals.css";
 
@@ -27,12 +27,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <ThemeInitializer />
-          <ClerkProvider>
-            <ErrorBoundary>
-              {children}
-              <Toaster richColors />
-            </ErrorBoundary>
-          </ClerkProvider>
+          <NuqsAdapter>
+            <Toaster theme="light" closeButton richColors />
+            <ConvexClientProvider>{children}</ConvexClientProvider>
+          </NuqsAdapter>
         </ThemeProvider>
       </body>
     </html>
