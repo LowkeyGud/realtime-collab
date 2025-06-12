@@ -31,10 +31,12 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <ThemeToggle />
             <Link href="/login">
-              <Button variant="outline">Log in</Button>
+              <Button variant="outline" className="cursor-pointer">
+                Log in
+              </Button>
             </Link>
             <Link href="/signup">
-              <Button>Sign up</Button>
+              <Button className="cursor-pointer">Sign up</Button>
             </Link>
           </div>
         </div>
@@ -54,12 +56,16 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3 mt-6">
                 <Link href="/signup">
-                  <Button size="lg" className="gap-1.5">
+                  <Button size="lg" className="gap-1.5 cursor-pointer">
                     Get Started <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
                 <Link href="/demo">
-                  <Button size="lg" variant="outline">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="cursor-pointer"
+                  >
                     View Demo
                   </Button>
                 </Link>

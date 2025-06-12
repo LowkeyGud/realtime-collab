@@ -15,7 +15,6 @@ export const metadata: Metadata = {
   description: "Collaborate in real-time with your team",
   keywords: "collaboration, real-time, document editing, team, workspace",
   authors: [{ name: "RealTime Collab Team" }],
-  viewport: "width=device-width, initial-scale=1",
 };
 
 export default function RootLayout({

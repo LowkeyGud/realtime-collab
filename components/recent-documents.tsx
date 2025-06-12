@@ -1,12 +1,17 @@
-"use client"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { FileText, MoreVertical, FileCode, Layers } from "lucide-react"
+"use client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { FileCode, FileText, Layers, MoreVertical } from "lucide-react";
+import Link from "next/link";
 
 interface RecentDocumentsProps {
-  showAll?: boolean
+  showAll?: boolean;
 }
 
 export function RecentDocuments({ showAll = false }: RecentDocumentsProps) {
@@ -67,23 +72,38 @@ export function RecentDocuments({ showAll = false }: RecentDocumentsProps) {
         initials: "MB",
       },
     },
-  ]
+  ];
 
   // Show more documents if showAll is true
-  const displayDocuments = showAll ? documents : documents.slice(0, 4)
+  const displayDocuments = showAll ? documents : documents.slice(0, 4);
 
   return (
     <div className="space-y-4">
       <div className="space-y-2">
         {displayDocuments.map((doc) => (
-          <div key={doc.id} className="flex items-center justify-between rounded-lg border p-3 text-sm">
+          <div
+            key={doc.id}
+            className="flex items-center justify-between rounded-lg border p-3 text-sm"
+          >
             <div className="flex items-center gap-3">
-              {doc.type === "document" && <FileText className="h-5 w-5 text-blue-500" />}
-              {doc.type === "code" && <FileCode className="h-5 w-5 text-green-500" />}
-              {doc.type === "whiteboard" && <Layers className="h-5 w-5 text-purple-500" />}
+              {doc.type === "document" && (
+                <FileText className="h-5 w-5 text-blue-500" />
+              )}
+              {doc.type === "code" && (
+                <FileCode className="h-5 w-5 text-green-500" />
+              )}
+              {doc.type === "whiteboard" && (
+                <Layers className="h-5 w-5 text-purple-500" />
+              )}
               <div>
                 <Link
-                  href={`/dashboard/${doc.type === "code" ? "code" : doc.type === "whiteboard" ? "whiteboard" : "documents"}/${doc.id}`}
+                  href={`/dashboard/${
+                    doc.type === "code"
+                      ? "code"
+                      : doc.type === "whiteboard"
+                      ? "whiteboard"
+                      : "documents"
+                  }/${doc.id}`}
                   className="font-medium hover:underline"
                 >
                   {doc.title}
@@ -97,7 +117,10 @@ export function RecentDocuments({ showAll = false }: RecentDocumentsProps) {
             </div>
             <div className="flex items-center gap-2">
               <Avatar className="h-6 w-6">
-                <AvatarImage src={doc.updatedBy.avatar || "/placeholder.svg"} alt={doc.updatedBy.name} />
+                <AvatarImage
+                  src={doc.updatedBy.avatar || "/placeholder.svg"}
+                  alt={doc.updatedBy.name}
+                />
                 <AvatarFallback>{doc.updatedBy.initials}</AvatarFallback>
               </Avatar>
               <DropdownMenu>
@@ -111,7 +134,9 @@ export function RecentDocuments({ showAll = false }: RecentDocumentsProps) {
                   <DropdownMenuItem>Open</DropdownMenuItem>
                   <DropdownMenuItem>Share</DropdownMenuItem>
                   <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                  <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                  <DropdownMenuItem className="text-destructive">
+                    Delete
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -121,11 +146,11 @@ export function RecentDocuments({ showAll = false }: RecentDocumentsProps) {
 
       {!showAll && (
         <div className="text-center">
-          <Link href="/dashboard/documents">
+          <Link href="/documents">
             <Button variant="outline">View All Documents</Button>
           </Link>
         </div>
       )}
     </div>
-  )
+  );
 }

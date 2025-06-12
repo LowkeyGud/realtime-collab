@@ -1,28 +1,28 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard,
-  FileText,
-  Code,
-  MessageSquare,
   Calendar,
   CheckSquare,
-  Users,
-  Settings,
+  Code,
+  FileText,
   HelpCircle,
   Layers,
+  LayoutDashboard,
+  MessageSquare,
+  Settings,
   Sun,
-} from "lucide-react"
+  Users,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface DashboardNavProps {
-  className?: string
+  className?: string;
 }
 
 export function DashboardNav({ className }: DashboardNavProps) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   const navItems = [
     {
@@ -32,40 +32,40 @@ export function DashboardNav({ className }: DashboardNavProps) {
     },
     {
       title: "Documents",
-      href: "/dashboard/documents",
+      href: "/documents",
       icon: <FileText className="h-5 w-5" />,
     },
     {
       title: "Code Editor",
-      href: "/dashboard/code",
+      href: "/code",
       icon: <Code className="h-5 w-5" />,
     },
     {
       title: "Chat",
-      href: "/dashboard/chat",
+      href: "/chat",
       icon: <MessageSquare className="h-5 w-5" />,
     },
     {
       title: "Meetings",
-      href: "/dashboard/meetings",
+      href: "/meetings",
       icon: <Calendar className="h-5 w-5" />,
     },
     {
       title: "Tasks",
-      href: "/dashboard/tasks",
+      href: "/tasks",
       icon: <CheckSquare className="h-5 w-5" />,
     },
     {
       title: "Whiteboard",
-      href: "/dashboard/whiteboard",
+      href: "/whiteboard",
       icon: <Layers className="h-5 w-5" />,
     },
     {
       title: "Team",
-      href: "/dashboard/team",
+      href: "/team",
       icon: <Users className="h-5 w-5" />,
     },
-  ]
+  ];
 
   return (
     <nav className={cn("flex flex-col gap-2", className)}>
@@ -75,7 +75,9 @@ export function DashboardNav({ className }: DashboardNavProps) {
           href={item.href}
           className={cn(
             "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-            pathname === item.href ? "bg-primary text-primary-foreground" : "hover:bg-muted",
+            pathname === item.href
+              ? "bg-primary text-primary-foreground"
+              : "hover:bg-muted"
           )}
         >
           {item.icon}
@@ -87,7 +89,9 @@ export function DashboardNav({ className }: DashboardNavProps) {
           href="/dashboard/settings"
           className={cn(
             "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-            pathname === "/dashboard/settings" ? "bg-primary text-primary-foreground" : "hover:bg-muted",
+            pathname === "/dashboard/settings"
+              ? "bg-primary text-primary-foreground"
+              : "hover:bg-muted"
           )}
         >
           <Settings className="h-5 w-5" />
@@ -97,7 +101,9 @@ export function DashboardNav({ className }: DashboardNavProps) {
           href="/dashboard/settings/theme"
           className={cn(
             "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-            pathname === "/dashboard/settings/theme" ? "bg-primary text-primary-foreground" : "hover:bg-muted",
+            pathname === "/dashboard/settings/theme"
+              ? "bg-primary text-primary-foreground"
+              : "hover:bg-muted"
           )}
         >
           <Sun className="h-5 w-5" />
@@ -112,5 +118,5 @@ export function DashboardNav({ className }: DashboardNavProps) {
         </Link>
       </div>
     </nav>
-  )
+  );
 }
