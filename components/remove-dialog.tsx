@@ -60,7 +60,7 @@ export const RemoveDialog = ({
               setIsRemoving(true);
 
               remove({ id: documentId })
-                .then(() => router.push("/"))
+                .then(() => router.push("/documents"))
                 .catch((error) => {
                   const errorMessage =
                     error instanceof ConvexError

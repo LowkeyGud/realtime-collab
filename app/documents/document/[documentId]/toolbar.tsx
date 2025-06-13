@@ -425,6 +425,7 @@ const HighlightColorButton = () => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="p-0">
+        {/* @ts-expect-error Server Component */}
         <TwitterPicker color={value} onChange={onChange} />
       </DropdownMenuContent>
     </DropdownMenu>
@@ -453,6 +454,7 @@ const TextColorButton = () => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="p-0">
+        {/* @ts-expect-error Server Component */}
         <TwitterPicker color={value} onChange={onChange} />
       </DropdownMenuContent>
     </DropdownMenu>

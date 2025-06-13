@@ -2,6 +2,7 @@ import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { ThemeInitializer } from "@/components/theme-init";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/providers/theme-provider";
+import "@liveblocks/react-ui/styles.css"; // Default styles
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";

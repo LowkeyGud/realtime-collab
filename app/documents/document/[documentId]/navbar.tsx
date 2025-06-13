@@ -1,5 +1,8 @@
 "use client";
 
+import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
+import { useMutation } from "convex/react";
+import { ConvexError } from "convex/values";
 import {
   BoldIcon,
   FileIcon,
@@ -9,7 +12,6 @@ import {
   FileTextIcon,
   GlobeIcon,
   ItalicIcon,
-  Layers,
   PrinterIcon,
   Redo2Icon,
   RemoveFormattingIcon,
@@ -19,9 +21,14 @@ import {
   UnderlineIcon,
   Undo2Icon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { BsFilePdf } from "react-icons/bs";
+import { toast } from "sonner";
 
+import { RemoveDialog } from "@/components/remove-dialog";
+import { RenameDialog } from "@/components/rename-dialog";
 import {
   Menubar,
   MenubarContent,
@@ -35,23 +42,36 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { useEditorStore } from "@/store/use-editor-store";
-import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 
-export const Navbar = () => {
+import { api } from "@/convex/_generated/api";
+import { Doc } from "@/convex/_generated/dataModel";
+import { Avatars } from "./avatars";
+import { DocumentInput } from "./document-input";
+import { Inbox } from "./inbox";
+
+interface NavbarProps {
+  data: Doc<"documents">;
+}
+
+export const Navbar = ({ data }: NavbarProps) => {
+  const router = useRouter();
   const { editor } = useEditorStore();
 
+  const mutate = useMutation(api.documents.create);
+
   const onNewDocument = () => {
-    // mutate({
-    //   title: 'Untitled Document',
-    //   initialContent: '',
-    // })
-    //   .then((id) => {
-    //     router.push(`/documents/document/${id}`);
-    //   })
-    //   .catch((error) => {
-    //     const errorMessage = error instanceof ConvexError ? error.data : 'Something went wrong!';
-    //     toast.error(errorMessage);
-    //   });
+    mutate({
+      title: "Untitled Document",
+      initialContent: "",
+    })
+      .then((id) => {
+        router.push(`/documents/${id}`);
+      })
+      .catch((error) => {
+        const errorMessage =
+          error instanceof ConvexError ? error.data : "Something went wrong!";
+        toast.error(errorMessage);
+      });
   };
 
   interface InsertTableProps {
@@ -81,7 +101,7 @@ export const Navbar = () => {
       type: "application/json",
     });
 
-    // onDownload(blob, `${data.title}.json`);
+    onDownload(blob, `${data.title}.json`);
   };
 
   const onSaveHTML = () => {
@@ -92,7 +112,7 @@ export const Navbar = () => {
       type: "text/html",
     });
 
-    // onDownload(blob, `${data.title}.html`);
+    onDownload(blob, `${data.title}.html`);
   };
 
   const onSaveText = () => {
@@ -103,18 +123,18 @@ export const Navbar = () => {
       type: "text/plain",
     });
 
-    // onDownload(blob, `${data.title}.txt`);
+    onDownload(blob, `${data.title}.txt`);
   };
 
   return (
     <nav className="flex items-center justify-between">
       <div className="flex items-center gap-2">
         <Link href="/">
-          <Layers className="h-6 w-6" />
+          <Image src="/logo.svg" alt="Docs Logo" width={36} height={36} />
         </Link>
 
         <div className="flex flex-col">
-          {/* <DocumentInput title={data.title} id={data._id} /> */}
+          <DocumentInput title={data.title} id={data._id} />
 
           <div className="flex">
             <Menubar className="h-auto border-none bg-transparent p-0 shadow-none">
@@ -155,25 +175,25 @@ export const Navbar = () => {
 
                   <MenubarSeparator />
 
-                  {/* <RenameDialog documentId={data._id} initialTitle={data.title}> */}
-                  <MenubarItem
-                    onClick={(e) => e.stopPropagation()}
-                    onSelect={(e) => e.preventDefault()}
-                  >
-                    <FilePenIcon className="mr-2 size-4" />
-                    Rename
-                  </MenubarItem>
-                  {/* </RenameDialog> */}
+                  <RenameDialog documentId={data._id} initialTitle={data.title}>
+                    <MenubarItem
+                      onClick={(e) => e.stopPropagation()}
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      <FilePenIcon className="mr-2 size-4" />
+                      Rename
+                    </MenubarItem>
+                  </RenameDialog>
 
-                  {/* <RemoveDialog documentId={data._id}> */}
-                  <MenubarItem
-                    onClick={(e) => e.stopPropagation()}
-                    onSelect={(e) => e.preventDefault()}
-                  >
-                    <Trash2Icon className="mr-2 size-4" />
-                    Remove
-                  </MenubarItem>
-                  {/* </RemoveDialog> */}
+                  <RemoveDialog documentId={data._id}>
+                    <MenubarItem
+                      onClick={(e) => e.stopPropagation()}
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      <Trash2Icon className="mr-2 size-4" />
+                      Remove
+                    </MenubarItem>
+                  </RemoveDialog>
 
                   <MenubarSeparator />
 
@@ -299,8 +319,8 @@ export const Navbar = () => {
       </div>
 
       <div className="flex items-center gap-3 pl-6">
-        {/* <Avatars /> */}
-        {/* <Inbox /> */}
+        <Avatars />
+        <Inbox />
 
         <OrganizationSwitcher
           afterCreateOrganizationUrl="/"
