@@ -29,13 +29,13 @@ const AvatarStack = () => {
       <div className="flex items-center">
         {currentUser && (
           <div className="relative ml-2">
-            <Avatar src={currentUser.info.avatar} name="You" />
+            <Avatar src={currentUser!.info!.avatar!} name="You" />
           </div>
         )}
 
         <div className="flex">
           {users.map(({ connectionId, info }) => (
-            <Avatar key={connectionId} src={info.avatar} name={info.name} />
+            <Avatar key={connectionId} src={info!.avatar!} name={info!.name!} />
           ))}
         </div>
       </div>
