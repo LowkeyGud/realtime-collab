@@ -72,7 +72,7 @@ export const Room = ({ children, roomId }: PropsWithChildren<RoomProps>) => {
         return filteredUsers.map((user) => user.id);
       }}
       resolveRoomsInfo={async ({ roomIds }) => {
-        const documents = await getDocuments(roomIds as Id<"documents">[]);
+        const documents = await getDocuments(roomIds as Id<"docsDocuments">[]);
 
         return documents.map((document) => ({
           id: document.id,

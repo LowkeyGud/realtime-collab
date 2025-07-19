@@ -1,6 +1,10 @@
-import { AnchoredThreads, FloatingComposer, FloatingThreads } from '@liveblocks/react-tiptap';
-import { ClientSideSuspense, useThreads } from '@liveblocks/react/suspense';
-import { Editor } from '@tiptap/react';
+import {
+  AnchoredThreads,
+  FloatingComposer,
+  FloatingThreads,
+} from "@liveblocks/react-tiptap";
+import { ClientSideSuspense, useThreads } from "@liveblocks/react/suspense";
+import { Editor } from "@tiptap/react";
 
 export const Threads = ({ editor }: { editor: Editor | null }) => {
   return (
@@ -19,7 +23,11 @@ const ThreadsList = ({ editor }: { editor: Editor | null }) => {
         <AnchoredThreads editor={editor} threads={threads} />
       </div>
 
-      <FloatingThreads editor={editor} threads={threads} className="floating-threads" />
+      <FloatingThreads
+        editor={editor}
+        threads={threads}
+        className="floating-threads"
+      />
 
       <FloatingComposer editor={editor} className="floating-composer" />
     </>

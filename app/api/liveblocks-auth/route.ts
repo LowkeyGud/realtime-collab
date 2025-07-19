@@ -9,45 +9,101 @@ const liveblocks = new Liveblocks({
   secret: process.env.LIVEBLOCKS_SECRET_KEY!,
 });
 
+type OrganizationClaims = {
+  id: string;
+  rol: string;
+  slg: string;
+};
+
 export async function POST(req: NextRequest) {
-  const { sessionClaims } = await auth();
-  const user = await currentUser();
+  try {
+    console.log("Liveblocks auth request received");
 
-  if (!sessionClaims || !user)
-    return new NextResponse("Unauthorized!", { status: 401 });
+    const { userId, sessionClaims } = await auth();
+    const sessionOrganizationId = (sessionClaims?.o as OrganizationClaims)?.id;
 
-  const { room } = await req.json();
-  const document = await convex.query(api.documents.getById, { id: room });
+    const user = await currentUser();
 
-  if (!document) return new NextResponse("Unauthorized!", { status: 401 });
+    if (!userId || !user || !sessionClaims) {
+      return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+      });
+    }
 
-  const isOwner = document.ownerId === user.id;
-  const isOrganizationMember = !!(
-    document.organizationId && document.organizationId === sessionClaims.org_id
-  );
+    const { room } = await req.json();
+    if (!room) {
+      return new NextResponse(
+        JSON.stringify({ error: "Room ID is required" }),
+        { status: 400 }
+      );
+    }
 
-  if (!isOwner && !isOrganizationMember)
-    return new NextResponse("Unauthorized!", { status: 401 });
+    // Check if the room is for Code Editor (starts with "snippet_")
+    let isAuthorized = false;
+    if (room.startsWith("snippet_")) {
+      // Query codeSnippets table for Code Editor
+      const snippetId = room.replace("snippet_", "");
+      console.log(`Checking snippet with ID: ${snippetId}`);
 
-  const name =
-    user.fullName ?? user.primaryEmailAddress?.emailAddress ?? "Anonymous";
-  const nameToNumber = name
-    .split("")
-    .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const hue = Math.abs(nameToNumber) % 360;
-  const color = `hsl(${hue}, 80%, 60%)`;
+      const snippet = await convex.query(api.codeSnippets.getSnippetById, {
+        snippetId: snippetId,
+      });
 
-  const session = liveblocks.prepareSession(user.id, {
-    userInfo: {
-      name,
-      avatar: user.imageUrl,
-      color,
-    },
-  });
+      if (
+        snippet &&
+        (snippet.userId === userId ||
+          (sessionOrganizationId &&
+            snippet.organizationId === sessionOrganizationId))
+      ) {
+        isAuthorized = true;
+      }
+    } else {
+      // Query documents table for Google Docs Clone
+      const document = await convex.query(api.documents.getById, { id: room });
+      if (document) {
+        const isOwner = document.ownerId === userId;
+        const isOrganizationMember =
+          document.organizationId &&
+          sessionOrganizationId === document.organizationId;
+        if (isOwner || isOrganizationMember) {
+          isAuthorized = true;
+        }
+      }
+    }
 
-  session.allow(room, session.FULL_ACCESS);
+    console.log(isAuthorized, "is authorized for room:", room);
 
-  const { body, status } = await session.authorize();
+    if (!isAuthorized) {
+      return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+      });
+    }
 
-  return new NextResponse(body, { status });
+    const name =
+      user.fullName ?? user.primaryEmailAddress?.emailAddress ?? "Anonymous";
+    const nameToNumber = name
+      .split("")
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const hue = Math.abs(nameToNumber) % 360;
+    const color = `hsl(${hue}, 80%, 60%)`;
+
+    const session = liveblocks.prepareSession(userId, {
+      userInfo: {
+        name,
+        avatar: user.imageUrl,
+        color,
+      },
+    });
+
+    session.allow(room, session.FULL_ACCESS);
+
+    const { body, status } = await session.authorize();
+    return new NextResponse(body, { status });
+  } catch (error) {
+    console.error("Liveblocks auth error:", error);
+    return new NextResponse(
+      JSON.stringify({ error: "Internal server error" }),
+      { status: 500 }
+    );
+  }
 }

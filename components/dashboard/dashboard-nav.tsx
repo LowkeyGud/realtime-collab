@@ -37,7 +37,7 @@ export function DashboardNav({ className }: DashboardNavProps) {
     },
     {
       title: "Code Editor",
-      href: "/code",
+      href: "/code-editor",
       icon: <Code className="h-5 w-5" />,
     },
     {

@@ -46,7 +46,7 @@ export function ConvexClientProvider({ children }: PropsWithChildren) {
         </Unauthenticated>
 
         <AuthLoading>
-          <FullscreenLoader label="Getting the docs ready..." />
+          <FullscreenLoader label="Loading..." />
         </AuthLoading>
       </ConvexProviderWithClerk>
     </ClerkProvider>

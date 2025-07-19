@@ -346,6 +346,22 @@
   a {
     @apply cursor-pointer text-blue-600 hover:underline;
   }
+
+  .collaboration-cursor__caret {
+    position: absolute;
+    width: 2px;
+    height: 1.2em;
+    background-color: #ff0000; /* User-specific color */
+  }
+  .collaboration-cursor__label {
+    position: absolute;
+    top: -1.6em;
+    background-color: #ff0000;
+    color: white;
+    padding: 2px 4px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
 }
 
 /* Liveblocks */
