@@ -21,7 +21,6 @@ export function ConvexClientProvider({ children }: PropsWithChildren) {
 
   // Define public routes that don't require authentication
   const publicRoutes = [
-    "/",
     "/login",
     "/signup",
     "/reset-password",
