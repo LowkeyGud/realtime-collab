@@ -21,7 +21,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
 interface RenameDialogProps {
-  documentId: Id<"documents">;
+  documentId: Id<"docsDocuments">;
   initialTitle: string;
 }
 

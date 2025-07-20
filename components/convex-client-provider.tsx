@@ -8,6 +8,7 @@ import {
   Unauthenticated,
 } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
+import { usePathname } from "next/navigation";
 import type { PropsWithChildren } from "react";
 
 import ErrorBoundary from "./error-boundary";
@@ -16,6 +17,21 @@ import { FullscreenLoader } from "./fullscreen-loader";
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export function ConvexClientProvider({ children }: PropsWithChildren) {
+  const pathname = usePathname();
+
+  // Define public routes that don't require authentication
+  const publicRoutes = [
+    "/",
+    "/login",
+    "/signup",
+    "/reset-password",
+    "/verify-email",
+  ];
+
+  const isPublicRoute = publicRoutes.some(
+    (route) => pathname === route || pathname.startsWith(route)
+  );
+
   return (
     <ClerkProvider
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
@@ -35,19 +51,27 @@ export function ConvexClientProvider({ children }: PropsWithChildren) {
       }}
     >
       <ConvexProviderWithClerk useAuth={useAuth} client={convex}>
-        <Authenticated>
+        {isPublicRoute ? (
+          // For public routes, render children without auth guards
           <ErrorBoundary>{children}</ErrorBoundary>
-        </Authenticated>
+        ) : (
+          // For protected routes, use auth guards
+          <>
+            <Authenticated>
+              <ErrorBoundary>{children}</ErrorBoundary>
+            </Authenticated>
 
-        <Unauthenticated>
-          <div className="flex min-h-screen items-center justify-center">
-            <SignIn routing="hash" />
-          </div>
-        </Unauthenticated>
+            <Unauthenticated>
+              <div className="flex min-h-screen items-center justify-center">
+                <SignIn routing="hash" />
+              </div>
+            </Unauthenticated>
 
-        <AuthLoading>
-          <FullscreenLoader label="Loading..." />
-        </AuthLoading>
+            <AuthLoading>
+              <FullscreenLoader label="Loading..." />
+            </AuthLoading>
+          </>
+        )}
       </ConvexProviderWithClerk>
     </ClerkProvider>
   );

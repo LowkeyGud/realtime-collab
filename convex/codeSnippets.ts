@@ -30,9 +30,11 @@ export const createSnippet = mutation({
       title: args.title,
       language: args.language,
       code: args.code,
-      roomId: `snippet_${identity.subject}_${args.title}`, // Optional: Store roomId
       organizationId: organizationId,
     });
+
+    const roomId = `snippet_${ctx.db.normalizeId("codeSnippets", snippetId)}`;
+    await ctx.db.patch(snippetId, { roomId });
 
     return snippetId;
   },

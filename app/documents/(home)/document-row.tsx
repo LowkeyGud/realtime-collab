@@ -9,7 +9,7 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { DocumentMenu } from "./document-menu";
 
 interface DocumentRowProps {
-  document: Doc<"documents">;
+  document: Doc<"docsDocuments">;
 }
 
 export const DocumentRow = ({ document }: DocumentRowProps) => {

@@ -5,13 +5,13 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/miro-components/ui/button";
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/miro-components/ui/dialog";
 import { Input } from "@/components/miro-components/ui/input";
 import { api } from "@/convex/_generated/api";

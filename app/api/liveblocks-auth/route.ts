@@ -19,9 +19,9 @@ export async function POST(req: NextRequest) {
   try {
     console.log("Liveblocks auth request received");
 
-    const { userId, sessionClaims } = await auth();
-    const sessionOrganizationId = (sessionClaims?.o as OrganizationClaims)?.id;
-
+    const { userId, orgId, sessionClaims } = await auth();
+    const sessionOrganizationId =
+      (sessionClaims?.o as OrganizationClaims)?.id || orgId;
     const user = await currentUser();
 
     if (!userId || !user || !sessionClaims) {
@@ -38,17 +38,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check if the room is for Code Editor (starts with "snippet_")
     let isAuthorized = false;
+
+    // Handle Code Editor rooms (starts with "snippet_")
     if (room.startsWith("snippet_")) {
-      // Query codeSnippets table for Code Editor
       const snippetId = room.replace("snippet_", "");
       console.log(`Checking snippet with ID: ${snippetId}`);
-
       const snippet = await convex.query(api.codeSnippets.getSnippetById, {
-        snippetId: snippetId,
+        snippetId,
       });
-
       if (
         snippet &&
         (snippet.userId === userId ||
@@ -57,8 +55,19 @@ export async function POST(req: NextRequest) {
       ) {
         isAuthorized = true;
       }
-    } else {
-      // Query documents table for Google Docs Clone
+    }
+    // Handle Board rooms (starts with "board_")
+    else if (room.startsWith("board_")) {
+      const boardId = room.replace("board_", "");
+      console.log(`Checking board with ID: ${boardId}`);
+      const board = await convex.query(api.board.get, { id: boardId });
+      if (board && board.orgId === sessionOrganizationId) {
+        isAuthorized = true;
+      }
+    }
+    // Handle Document rooms (plain Convex ID)
+    else {
+      console.log(`Checking document with ID: ${room}`);
       const document = await convex.query(api.documents.getById, { id: room });
       if (document) {
         const isOwner = document.ownerId === userId;
@@ -79,22 +88,25 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Prepare user info for Liveblocks session
     const name =
-      user.fullName ?? user.primaryEmailAddress?.emailAddress ?? "Anonymous";
+      user.fullName ||
+      user.firstName ||
+      user.primaryEmailAddress?.emailAddress ||
+      "Teammate";
     const nameToNumber = name
       .split("")
       .reduce((acc, char) => acc + char.charCodeAt(0), 0);
     const hue = Math.abs(nameToNumber) % 360;
     const color = `hsl(${hue}, 80%, 60%)`;
 
-    const session = liveblocks.prepareSession(userId, {
-      userInfo: {
-        name,
-        avatar: user.imageUrl,
-        color,
-      },
-    });
+    const userInfo = {
+      name,
+      picture: user.imageUrl,
+      color, // Include color for consistency with first snippet
+    };
 
+    const session = liveblocks.prepareSession(userId, { userInfo });
     session.allow(room, session.FULL_ACCESS);
 
     const { body, status } = await session.authorize();

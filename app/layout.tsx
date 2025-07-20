@@ -1,4 +1,5 @@
 import { ConvexClientProvider } from "@/components/convex-client-provider";
+import { DashboardWrapper } from "@/components/layouts/dashboard-wrapper";
 import { ThemeInitializer } from "@/components/theme-init";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/providers/theme-provider";
@@ -30,7 +31,9 @@ export default function RootLayout({
           <ThemeInitializer />
           <NuqsAdapter>
             <Toaster theme="light" closeButton richColors />
-            <ConvexClientProvider>{children}</ConvexClientProvider>
+            <ConvexClientProvider>
+              <DashboardWrapper>{children}</DashboardWrapper>
+            </ConvexClientProvider>
           </NuqsAdapter>
         </ThemeProvider>
       </body>

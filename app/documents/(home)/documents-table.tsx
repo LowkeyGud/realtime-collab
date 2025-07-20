@@ -14,7 +14,7 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { DocumentRow } from "./document-row";
 
 interface DocumentsTableProps {
-  documents: Doc<"documents">[] | undefined;
+  documents: Doc<"docsDocuments">[] | undefined;
   loadMore: (numItems: number) => void;
   status: PaginationStatus;
 }

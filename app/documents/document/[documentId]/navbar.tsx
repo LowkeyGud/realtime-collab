@@ -50,7 +50,7 @@ import { DocumentInput } from "./document-input";
 import { Inbox } from "./inbox";
 
 interface NavbarProps {
-  data: Doc<"documents">;
+  data: Doc<"docsDocuments">;
 }
 
 export const Navbar = ({ data }: NavbarProps) => {

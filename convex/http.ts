@@ -62,6 +62,20 @@ http.route({
       }
     }
 
+    if (eventType === "organization.created") {
+      const { id, name } = evt.data;
+
+      try {
+        await ctx.runMutation(api.chatGroups.createChatGroup, {
+          organizationId: id,
+          name: name,
+        });
+      } catch (error) {
+        console.log("Error deleting user:", error);
+        return new Response("Error deleting user", { status: 500 });
+      }
+    }
+
     return new Response("Webhook processed successfully", { status: 200 });
   }),
 });

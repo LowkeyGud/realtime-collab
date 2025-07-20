@@ -7,10 +7,10 @@ import { toast } from "sonner";
 import { ConfirmModal } from "@/components/miro-components/confirm-modal";
 import { Button } from "@/components/miro-components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/miro-components/ui/dropdown-menu";
 import { api } from "@/convex/_generated/api";
 import { useApiMutation } from "@/hooks/use-api-mutation";
@@ -36,7 +36,7 @@ export const Actions = ({
 
   const onCopyLink = () => {
     navigator.clipboard
-      .writeText(`${window.location.origin}/board/${id}`)
+      .writeText(`${window.location.origin}whiteboard/board/${id}`)
       .then(() => toast.success("Link copied."))
       .catch(() => toast.error("Failed to copy link."));
   };

@@ -14,7 +14,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 
 interface DocumentInputProps {
   title: string;
-  id: Id<"documents">;
+  id: Id<"docsDocuments">;
 }
 
 export const DocumentInput = ({ title, id }: DocumentInputProps) => {

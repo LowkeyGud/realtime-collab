@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils";
 import {
-  Calendar,
   CheckSquare,
   Code,
   FileText,
@@ -45,11 +44,7 @@ export function DashboardNav({ className }: DashboardNavProps) {
       href: "/chat",
       icon: <MessageSquare className="h-5 w-5" />,
     },
-    {
-      title: "Meetings",
-      href: "/meetings",
-      icon: <Calendar className="h-5 w-5" />,
-    },
+
     {
       title: "Tasks",
       href: "/tasks",

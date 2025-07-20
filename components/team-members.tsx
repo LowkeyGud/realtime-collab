@@ -1,12 +1,17 @@
-"use client"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreVertical } from "lucide-react"
+"use client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreVertical } from "lucide-react";
 
 interface TeamMembersProps {
-  showAll?: boolean
+  showAll?: boolean;
 }
 
 export function TeamMembers({ showAll = false }: TeamMembersProps) {
@@ -57,20 +62,26 @@ export function TeamMembers({ showAll = false }: TeamMembersProps) {
       avatar: "/placeholder.svg?height=40&width=40",
       initials: "MB",
     },
-  ]
+  ];
 
   // Show more members if showAll is true
-  const displayMembers = showAll ? members : members.slice(0, 4)
+  const displayMembers = showAll ? members : members.slice(0, 4);
 
   return (
     <div className="space-y-4">
       <div className="space-y-2">
         {displayMembers.map((member) => (
-          <div key={member.id} className="flex items-center justify-between rounded-lg border p-3 text-sm">
+          <div
+            key={member.id}
+            className="flex items-center justify-between rounded-lg border p-3 text-sm"
+          >
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Avatar>
-                  <AvatarImage src={member.avatar || "/placeholder.svg"} alt={member.name} />
+                  <AvatarImage
+                    src={member.avatar || "/placeholder.svg"}
+                    alt={member.name}
+                  />
                   <AvatarFallback>{member.initials}</AvatarFallback>
                 </Avatar>
                 <span
@@ -79,11 +90,21 @@ export function TeamMembers({ showAll = false }: TeamMembersProps) {
               </div>
               <div>
                 <div className="font-medium">{member.name}</div>
-                <div className="text-xs text-muted-foreground">{member.email}</div>
+                <div className="text-xs text-muted-foreground">
+                  {member.email}
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant={member.role === "Admin" ? "default" : member.role === "Editor" ? "outline" : "secondary"}>
+              <Badge
+                variant={
+                  member.role === "Admin"
+                    ? "default"
+                    : member.role === "Editor"
+                      ? "outline"
+                      : "secondary"
+                }
+              >
                 {member.role}
               </Badge>
               <DropdownMenu>
@@ -97,7 +118,9 @@ export function TeamMembers({ showAll = false }: TeamMembersProps) {
                   <DropdownMenuItem>View Profile</DropdownMenuItem>
                   <DropdownMenuItem>Send Message</DropdownMenuItem>
                   <DropdownMenuItem>Change Role</DropdownMenuItem>
-                  <DropdownMenuItem className="text-destructive">Remove</DropdownMenuItem>
+                  <DropdownMenuItem className="text-destructive">
+                    Remove
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -111,5 +134,5 @@ export function TeamMembers({ showAll = false }: TeamMembersProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -10,6 +10,8 @@ import { toast } from "sonner";
 
 import { FullscreenLoader } from "@/components/fullscreen-loader";
 import { editorMargin } from "@/config/editor";
+import { Layer } from "@/types/canvas";
+import { LiveList, LiveMap, LiveObject } from "@liveblocks/client";
 
 import { Id } from "@/convex/_generated/dataModel";
 import { getDocuments, getUsers } from "./actions";
@@ -56,9 +58,14 @@ export const Room = ({ children, roomId }: PropsWithChildren<RoomProps>) => {
       }}
       throttle={16}
       resolveUsers={({ userIds }) => {
-        return userIds.map(
-          (userId) => users.find((user) => user.id === userId) ?? undefined
-        );
+        return userIds.map((userId) => {
+          const user = users.find((user) => user.id === userId);
+          if (!user) return undefined;
+          return {
+            name: user.name,
+            picture: user.avatar, // Map 'avatar' to 'picture'
+          };
+        });
       }}
       resolveMentionSuggestions={({ text }) => {
         let filteredUsers = users;
@@ -82,7 +89,22 @@ export const Room = ({ children, roomId }: PropsWithChildren<RoomProps>) => {
     >
       <RoomProvider
         id={roomId}
-        initialStorage={{ leftMargin: editorMargin, rightMargin: editorMargin }}
+        initialPresence={{
+          cursor: null,
+          selection: [],
+          pencilDraft: null,
+          penColor: null,
+        }}
+        initialStorage={{
+          // Whiteboard-specific storage
+          layers: new LiveMap<string, LiveObject<Layer>>(),
+          layerIds: new LiveList([]),
+          // Document editor-specific storage
+          leftMargin: editorMargin,
+          rightMargin: editorMargin,
+          // Code editor-specific storage
+          code: "",
+        }}
       >
         <ClientSideSuspense
           fallback={<FullscreenLoader label="Loading Document..." />}

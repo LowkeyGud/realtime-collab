@@ -101,8 +101,8 @@ export function RecentDocuments({ showAll = false }: RecentDocumentsProps) {
                     doc.type === "code"
                       ? "code"
                       : doc.type === "whiteboard"
-                      ? "whiteboard"
-                      : "documents"
+                        ? "whiteboard"
+                        : "documents"
                   }/${doc.id}`}
                   className="font-medium hover:underline"
                 >

@@ -1,7 +1,13 @@
-"use client"
+"use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { FileText, MessageSquare, CheckSquare, FileCode, Layers } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  CheckSquare,
+  FileCode,
+  FileText,
+  Layers,
+  MessageSquare,
+} from "lucide-react";
 
 export function ActivityFeed() {
   // Mock data for activity feed
@@ -66,32 +72,35 @@ export function ActivityFeed() {
         initials: "MB",
       },
     },
-  ]
+  ];
 
   // Get icon based on activity type
   const getActivityIcon = (type: string) => {
     switch (type) {
       case "document":
-        return <FileText className="h-4 w-4 text-blue-500" />
+        return <FileText className="h-4 w-4 text-blue-500" />;
       case "chat":
-        return <MessageSquare className="h-4 w-4 text-purple-500" />
+        return <MessageSquare className="h-4 w-4 text-purple-500" />;
       case "task":
-        return <CheckSquare className="h-4 w-4 text-green-500" />
+        return <CheckSquare className="h-4 w-4 text-green-500" />;
       case "code":
-        return <FileCode className="h-4 w-4 text-orange-500" />
+        return <FileCode className="h-4 w-4 text-orange-500" />;
       case "whiteboard":
-        return <Layers className="h-4 w-4 text-indigo-500" />
+        return <Layers className="h-4 w-4 text-indigo-500" />;
       default:
-        return <FileText className="h-4 w-4" />
+        return <FileText className="h-4 w-4" />;
     }
-  }
+  };
 
   return (
     <div className="space-y-4">
       {activities.map((activity) => (
         <div key={activity.id} className="flex items-start gap-3">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={activity.user.avatar || "/placeholder.svg"} alt={activity.user.name} />
+            <AvatarImage
+              src={activity.user.avatar || "/placeholder.svg"}
+              alt={activity.user.name}
+            />
             <AvatarFallback>{activity.user.initials}</AvatarFallback>
           </Avatar>
           <div className="flex-1 space-y-1">
@@ -108,5 +117,5 @@ export function ActivityFeed() {
         </div>
       ))}
     </div>
-  )
+  );
 }

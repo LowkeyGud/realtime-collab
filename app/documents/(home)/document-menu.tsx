@@ -17,7 +17,7 @@ import {
 import { Id } from "@/convex/_generated/dataModel";
 
 interface DocumentMenuProps {
-  documentId: Id<"documents">;
+  documentId: Id<"docsDocuments">;
   title: string;
   onNewTab: () => void;
 }

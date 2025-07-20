@@ -2,19 +2,19 @@
 import { Snippet } from "@/types";
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
 import { useState } from "react";
+import { api } from "../../../../convex/_generated/api";
 
+import StarButton from "@/components/code-components/StarButton";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { Clock, Trash2, User } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import toast from "react-hot-toast";
-import StarButton from "@/components/StarButton";
 
 function SnippetCard({ snippet }: { snippet: Snippet }) {
   const { user } = useUser();
-  const deleteSnippet = useMutation(api.snippets.deleteSnippet);
+  const deleteSnippet = useMutation(api.codeSnippets.deleteSnippet);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
@@ -117,7 +117,9 @@ function SnippetCard({ snippet }: { snippet: Snippet }) {
                     <div className="p-1 rounded-md bg-gray-800/50">
                       <User className="size-3" />
                     </div>
-                    <span className="truncate max-w-[150px]">{snippet.userName}</span>
+                    <span className="truncate max-w-[150px]">
+                      {snippet.userName}
+                    </span>
                   </div>
                 </div>
               </div>
