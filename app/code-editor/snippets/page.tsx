@@ -56,12 +56,7 @@ function SnippetsPage() {
 
   // loading state for snippets
   if (snippets === undefined) {
-    return (
-      <div className="min-h-screen">
-        <NavigationHeader />
-        <SnippetsPageSkeleton />
-      </div>
-    );
+    return <div className="min-h-screen"></div>;
   }
 
   const languages = [...new Set(snippets.map((s) => s.language))];

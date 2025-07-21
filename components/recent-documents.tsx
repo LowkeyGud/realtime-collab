@@ -79,13 +79,13 @@ export function RecentDocuments({ showAll = false }: RecentDocumentsProps) {
               )}
               <div>
                 <Link
-                  href={`/dashboard/${
+                  href={`/${
                     doc.type === "code"
-                      ? "code"
+                      ? "code-editor/snippets/"
                       : doc.type === "whiteboard"
-                        ? "whiteboard"
-                        : "documents"
-                  }/${doc._id}`}
+                        ? "whiteboard/board/board_"
+                        : "documents/document/"
+                  }${doc._id}`}
                   className="font-medium hover:underline"
                 >
                   {doc.title}

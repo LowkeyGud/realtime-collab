@@ -1,4 +1,3 @@
-import { ActivityFeed } from "@/components/activity-feed";
 import { RecentDocuments } from "@/components/recent-documents";
 import { TaskList } from "@/components/task-list";
 import { TeamMembers } from "@/components/team-members";
@@ -71,7 +70,7 @@ export default function DashboardPage() {
             </Card>
           </div> */}
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-1">
             <Card className="col-span-4">
               <CardHeader>
                 <CardTitle>Recent Documents</CardTitle>
@@ -83,7 +82,7 @@ export default function DashboardPage() {
                 <RecentDocuments />
               </CardContent>
             </Card>
-            <Card className="col-span-3">
+            {/* <Card className="col-span-3">
               <CardHeader>
                 <CardTitle>Activity Feed</CardTitle>
                 <CardDescription>
@@ -93,7 +92,7 @@ export default function DashboardPage() {
               <CardContent>
                 <ActivityFeed />
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">

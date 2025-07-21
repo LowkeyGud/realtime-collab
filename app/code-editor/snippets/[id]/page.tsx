@@ -13,7 +13,6 @@ import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import Comments from "./_components/Comments";
 import CopyButton from "./_components/CopyButton";
-import SnippetLoadingSkeleton from "./_components/SnippetLoadingSkeleton";
 
 function SnippetDetailPage() {
   const params = useParams();
@@ -27,7 +26,7 @@ function SnippetDetailPage() {
     snippetId: snippetId as Id<"codeSnippets">,
   });
 
-  if (snippet === undefined) return <SnippetLoadingSkeleton />;
+  if (snippet === undefined) return <div></div>;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0f] transition-colors">
