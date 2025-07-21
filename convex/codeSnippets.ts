@@ -160,6 +160,19 @@ export const getSnippets = query({
   },
 });
 
+export const getSnippetsByOrgId = query({
+  args: { organizationId: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    const snippets = await ctx.db
+      .query("codeSnippets")
+      .filter((q) => q.eq(q.field("organizationId"), args.organizationId))
+      .order("desc")
+      .collect();
+
+    return snippets;
+  },
+});
+
 export const getSnippetById = query({
   args: { snippetId: v.id("codeSnippets") },
   handler: async (ctx, args) => {

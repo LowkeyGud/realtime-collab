@@ -3,15 +3,12 @@
 import { useQuery } from "convex/react";
 import { Menu } from "lucide-react";
 import { Poppins } from "next/font/google";
-import Image from "next/image";
-import Link from "next/link";
 
 import { Actions } from "@/components/miro-components/actions";
 import { Hint } from "@/components/miro-components/hint";
 import { Button } from "@/components/miro-components/ui/button";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { cn } from "@/lib/utils";
 import { useRenameModal } from "@/store/use-rename-modal";
 
 const TabSeparator = () => <div className="text-neutral-300 px-1.5">|</div>;
@@ -36,7 +33,7 @@ export const Info = ({ boardId }: InfoProps) => {
 
   return (
     <div className="absolute top-2 left-2 bg-white rounded-md px-1.5 h-12 flex items-center shadow-md">
-      <Hint label="Go to boards" side="bottom" sideOffset={10}>
+      {/* <Hint label="Go to boards" side="bottom" sideOffset={10}>
         <Button variant="board" className="px-2" asChild>
           <Link href="/">
             <Image
@@ -55,7 +52,7 @@ export const Info = ({ boardId }: InfoProps) => {
             </span>
           </Link>
         </Button>
-      </Hint>
+      </Hint> */}
 
       <TabSeparator />
 

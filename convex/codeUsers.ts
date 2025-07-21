@@ -6,6 +6,7 @@ export const syncUser = mutation({
     userId: v.string(),
     email: v.string(),
     name: v.string(),
+    imageUrl: v.string(),
   },
   handler: async (ctx, args) => {
     const existingUser = await ctx.db
@@ -18,6 +19,7 @@ export const syncUser = mutation({
         userId: args.userId,
         email: args.email,
         name: args.name,
+        imageUrl: args.imageUrl,
         isPro: true,
       });
     }

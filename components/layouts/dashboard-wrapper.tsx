@@ -5,6 +5,7 @@ import { DashboardNav } from "@/components/dashboard/dashboard-nav";
 import ErrorBoundary from "@/components/error-boundary";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NetworkMonitor } from "@/components/network-monitor";
+import { cn } from "@/lib/utils";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import type React from "react";
@@ -22,6 +23,8 @@ const DASHBOARD_ROUTES = [
   "/team",
   "/chat",
   "/meetings",
+  "/code-editor",
+  "/whiteboard",
 ];
 
 export function DashboardWrapper({ children }: DashboardWrapperProps) {
@@ -29,6 +32,7 @@ export function DashboardWrapper({ children }: DashboardWrapperProps) {
   const { isLoaded } = useAuth();
   const { user } = useUser();
   const [isMounted, setIsMounted] = useState(false);
+  const [isNavCollapsed, setIsNavCollapsed] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -77,8 +81,20 @@ export function DashboardWrapper({ children }: DashboardWrapperProps) {
     <div className="flex min-h-screen flex-col">
       <DashboardHeader />
       <div className="flex flex-1">
-        <DashboardNav className="hidden md:flex w-64 border-r p-6" />
-        <main className="flex-1 overflow-auto">
+        <DashboardNav
+          className={cn(
+            "hidden md:flex border-r fixed left-0 top-16 h-[calc(100vh-4rem)] z-20",
+            isNavCollapsed ? "p-2" : "p-6"
+          )}
+          isCollapsed={isNavCollapsed}
+          onToggleCollapse={() => setIsNavCollapsed(!isNavCollapsed)}
+        />
+        <main
+          className={cn(
+            "flex-1 overflow-auto",
+            isNavCollapsed ? "md:ml-16" : "md:ml-64"
+          )}
+        >
           <ErrorBoundary>{children}</ErrorBoundary>
         </main>
       </div>

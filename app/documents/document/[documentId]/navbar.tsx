@@ -1,6 +1,5 @@
 "use client";
 
-import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import { ConvexError } from "convex/values";
 import {
@@ -47,7 +46,6 @@ import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { Avatars } from "./avatars";
 import { DocumentInput } from "./document-input";
-import { Inbox } from "./inbox";
 
 interface NavbarProps {
   data: Doc<"docsDocuments">;
@@ -320,16 +318,6 @@ export const Navbar = ({ data }: NavbarProps) => {
 
       <div className="flex items-center gap-3 pl-6">
         <Avatars />
-        <Inbox />
-
-        <OrganizationSwitcher
-          afterCreateOrganizationUrl="/"
-          afterLeaveOrganizationUrl="/"
-          afterSelectOrganizationUrl="/"
-          afterSelectPersonalUrl="/"
-        />
-
-        <UserButton />
       </div>
     </nav>
   );

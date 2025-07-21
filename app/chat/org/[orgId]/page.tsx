@@ -1,4 +1,5 @@
 "use client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { api } from "@/convex/_generated/api";
 import { useOrganization, useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
@@ -21,6 +22,7 @@ export default function ChatPage({ params }: ChatPageProps) {
     api.message.getMessages,
     chatGroup ? { chatGroupId: chatGroup._id } : "skip"
   );
+
   const sendMessage = useMutation(api.message.sendMessage);
   const generateUploadUrl = useMutation(api.message.generateUploadUrl);
 
@@ -81,32 +83,25 @@ export default function ChatPage({ params }: ChatPageProps) {
 
   if (!chatGroup) {
     return (
-      <div className="flex items-center justify-center h-screen w-screen bg-white">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-gray-900"></div>
+      <div className="flex items-center justify-center h-screen w-screen bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary"></div>
       </div>
     );
   }
 
   if (!organization || !user || organization.id !== orgId) {
     return (
-      <div className="flex items-center justify-center h-screen w-screen bg-white">
-        <div className="text-red-500 text-lg font-medium">Access Denied</div>
+      <div className="flex items-center justify-center h-screen w-screen bg-background">
+        <div className="text-destructive text-lg font-medium">
+          Access Denied
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen w-screen bg-white flex flex-col text-gray-900">
-      <div className="bg-gray-100 shadow-sm border-b border-gray-200 p-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold">{chatGroup.name}</h1>
-          <div className="text-sm text-gray-600">
-            {organization?.membersCount} members
-          </div>
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="bg-background text-foreground relative h-[calc(100vh-4rem)]">
+      <div className="absolute inset-0 pb-20 overflow-y-auto p-4 space-y-4">
         {messages?.map((msg) => (
           <div
             key={msg._id}
@@ -117,26 +112,29 @@ export default function ChatPage({ params }: ChatPageProps) {
             <div
               className={`w-[70%] flex items-start gap-3 p-3 rounded-xl transition-all ${
                 msg.userId === user.id
-                  ? "bg-blue-100"
-                  : "bg-gray-100 border border-gray-200"
+                  ? "bg-primary/10"
+                  : "bg-muted border border-border"
               } hover:bg-opacity-90`}
             >
-              <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-sm">
-                {msg.username[0].toUpperCase()}
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={msg.user?.imageUrl} alt={msg.username} />
+                <AvatarFallback className="text-sm">
+                  {msg.username[0].toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
               <div>
                 <div className="flex items-baseline gap-2">
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-foreground">
                     {msg.username}
                   </span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-muted-foreground">
                     {new Date(msg._creationTime).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
                   </span>
                 </div>
-                <p className="mt-1 text-gray-800">{msg.body}</p>
+                <p className="mt-1 text-foreground">{msg.body}</p>
                 {msg.imageUrl && (
                   <img
                     src={msg.imageUrl}
@@ -154,7 +152,7 @@ export default function ChatPage({ params }: ChatPageProps) {
 
       <form
         onSubmit={handleSendMessage}
-        className="p-4 border-t border-gray-200 bg-gray-100"
+        className="absolute bottom-0 left-0 right-0 p-4 border-t border-border bg-background"
       >
         <div className="flex items-end gap-2">
           <div className="flex-1 relative">
@@ -163,7 +161,7 @@ export default function ChatPage({ params }: ChatPageProps) {
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               placeholder="Type your message..."
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900 placeholder-gray-500"
+              className="w-full px-4 py-2 rounded-lg border border-border focus:ring-2 focus:ring-ring focus:border-ring outline-none transition-all bg-background text-foreground placeholder-muted-foreground"
             />
             {previewUrl && (
               <div className="absolute bottom-full left-0 mb-2">
@@ -192,9 +190,9 @@ export default function ChatPage({ params }: ChatPageProps) {
               onChange={(e) => setSelectedImage(e.target.files?.[0] || null)}
               className="hidden"
             />
-            <div className="p-2 hover:bg-gray-200 rounded-lg transition-colors">
+            <div className="p-2 hover:bg-accent rounded-lg transition-colors">
               <svg
-                className="w-5 h-5 text-gray-600"
+                className="w-5 h-5 text-muted-foreground"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -212,10 +210,10 @@ export default function ChatPage({ params }: ChatPageProps) {
           <button
             type="submit"
             disabled={(!messageText && !selectedImage) || isSending}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:bg-muted-foreground disabled:text-muted disabled:cursor-not-allowed transition-all flex items-center gap-2"
           >
             {isSending && (
-              <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></div>
+              <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-current"></div>
             )}
             Send
           </button>
@@ -224,7 +222,7 @@ export default function ChatPage({ params }: ChatPageProps) {
 
       {fullScreenImage && (
         <div
-          className="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-background/90 backdrop-blur-sm flex items-center justify-center z-50"
           onClick={() => setFullScreenImage(null)}
         >
           <img
@@ -233,7 +231,7 @@ export default function ChatPage({ params }: ChatPageProps) {
             className="max-w-[90%] max-h-[90%] object-contain"
           />
           <button
-            className="absolute top-4 right-4 bg-gray-200 text-gray-900 rounded-full w-8 h-8 flex items-center justify-center text-lg"
+            className="absolute top-4 right-4 bg-background text-foreground rounded-full w-8 h-8 flex items-center justify-center text-lg border border-border"
             onClick={() => setFullScreenImage(null)}
           >
             ×

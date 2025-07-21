@@ -35,14 +35,16 @@ function CommentForm({ isSubmitting, onSubmit }: CommentFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="mb-8">
-      <div className="bg-[#0a0a0f] rounded-xl border border-[#ffffff0a] overflow-hidden">
+      <div className="bg-gray-50 dark:bg-[#0a0a0f] rounded-xl border border-gray-200 dark:border-[#ffffff0a] overflow-hidden">
         {/* Comment form header */}
         <div className="flex justify-end gap-2 px-4 pt-2">
           <button
             type="button"
             onClick={() => setIsPreview(!isPreview)}
             className={`text-sm px-3 py-1 rounded-md transition-colors ${
-              isPreview ? "bg-blue-500/10 text-blue-400" : "hover:bg-[#ffffff08] text-gray-400"
+              isPreview
+                ? "bg-blue-500/10 text-blue-400"
+                : "hover:bg-gray-200 dark:hover:bg-[#ffffff08] text-gray-600 dark:text-gray-400"
             }`}
           >
             {isPreview ? "Edit" : "Preview"}
@@ -51,7 +53,7 @@ function CommentForm({ isSubmitting, onSubmit }: CommentFormProps) {
 
         {/* Comment form body */}
         {isPreview ? (
-          <div className="min-h-[120px] p-4 text-[#e1e1e3">
+          <div className="min-h-[120px] p-4 text-gray-900 dark:text-[#e1e1e3]">
             <CommentContent content={comment} />
           </div>
         ) : (
@@ -60,19 +62,19 @@ function CommentForm({ isSubmitting, onSubmit }: CommentFormProps) {
             onChange={(e) => setComment(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Add to the discussion..."
-            className="w-full bg-transparent border-0 text-[#e1e1e3] placeholder:text-[#808086] outline-none 
+            className="w-full bg-transparent border-0 text-gray-900 dark:text-[#e1e1e3] placeholder:text-gray-500 dark:placeholder:text-[#808086] outline-none 
             resize-none min-h-[120px] p-4 font-mono text-sm"
           />
         )}
 
         {/* Comment Form Footer */}
-        <div className="flex items-center justify-between gap-4 px-4 py-3 bg-[#080809] border-t border-[#ffffff0a]">
-          <div className="hidden sm:block text-xs text-[#808086] space-y-1">
+        <div className="flex items-center justify-between gap-4 px-4 py-3 bg-gray-100 dark:bg-[#080809] border-t border-gray-200 dark:border-[#ffffff0a]">
+          <div className="hidden sm:block text-xs text-gray-600 dark:text-[#808086] space-y-1">
             <div className="flex items-center gap-2">
               <CodeIcon className="w-3.5 h-3.5" />
               <span>Format code with ```language</span>
             </div>
-            <div className="text-[#808086]/60 pl-5">
+            <div className="text-gray-500 dark:text-[#808086]/60 pl-5">
               Tab key inserts spaces • Preview your comment before posting
             </div>
           </div>

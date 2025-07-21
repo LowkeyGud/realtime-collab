@@ -38,8 +38,9 @@ export const getMessages = query({
     const messages = await ctx.db
       .query("messages")
       .withIndex("by_chatGroupId", (q) => q.eq("chatGroupId", args.chatGroupId))
-      .order("desc")
+      .order("asc")
       .collect();
+
     return Promise.all(
       messages.map(async (message) => {
         const user = await ctx.db

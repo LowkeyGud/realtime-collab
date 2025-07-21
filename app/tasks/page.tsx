@@ -1,11 +1,18 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useOrganization, useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
-import { Plus } from "lucide-react";
+import { MoreVertical, Plus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -53,38 +60,33 @@ export default function TaskList() {
     fetchMembers();
   }, [organization]);
 
-  const getMemberName = (userId: string) => {
-    const member = members.find((m) => m.userId === userId);
-    return member ? `${member.firstName} ${member.lastName}` : userId;
-  };
-
   const getMember = (userId: string) => {
     return members.find((m) => m.userId === userId);
   };
 
-  const MemberInfo = ({ userId, label }: { userId: string; label: string }) => {
-    const member = getMember(userId);
-    const name = member ? `${member.firstName} ${member.lastName}` : userId;
-    const initials = member
-      ? `${member.firstName[0]}${member.lastName[0]}`
-      : userId.slice(0, 2).toUpperCase();
+  const getPriorityBadge = (priority?: string) => {
+    switch (priority) {
+      case "high":
+        return { variant: "destructive" as const, label: "High" };
+      case "medium":
+        return { variant: "default" as const, label: "Medium" };
+      case "low":
+        return { variant: "secondary" as const, label: "Low" };
+      default:
+        return { variant: "outline" as const, label: "No Priority" };
+    }
+  };
 
-    return (
-      <div className="flex items-center gap-3">
-        <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-          {label}:
-        </span>
-        <Avatar className="h-8 w-8 ring-1 ring-gray-200 dark:ring-gray-700">
-          <AvatarImage src={member?.imageUrl} alt={name} />
-          <AvatarFallback className="text-xs font-medium bg-gray-100 dark:bg-gray-800">
-            {initials}
-          </AvatarFallback>
-        </Avatar>
-        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-          {name}
-        </span>
-      </div>
-    );
+  const formatDueDate = (timestamp?: number) => {
+    if (!timestamp) return "No due date";
+    const date = new Date(timestamp);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    if (date.toDateString() === today.toDateString()) return "Today";
+    if (date.toDateString() === tomorrow.toDateString()) return "Tomorrow";
+    return date.toLocaleDateString();
   };
 
   const handleComplete = async (taskId: Id<"tasks">) => {
@@ -105,89 +107,111 @@ export default function TaskList() {
     }
   };
 
-  if (!tasks)
+  if (!tasks) {
     return (
-      <div className="flex items-center justify-center h-screen text-gray-500 dark:text-gray-400">
-        Loading...
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          Tasks
-        </h1>
+        <h1 className="text-2xl font-bold">Tasks</h1>
         <Link href="/tasks/new">
-          <Button className="bg-primary hover:bg-primary/90 text-white font-medium px-4 py-2 rounded-md flex items-center gap-2">
-            <Plus className="w-5 h-5" />
+          <Button className="flex items-center gap-2">
+            <Plus className="w-4 h-4" />
             Add New Task
           </Button>
         </Link>
       </div>
-      <div className="space-y-6">
-        {tasks.map((task) => (
-          <Card
-            key={task._id}
-            className="shadow-sm hover:shadow-md transition-shadow duration-200 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-          >
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                <Link
-                  href={`/tasks/${task._id}`}
-                  className="hover:underline hover:text-primary transition-colors duration-150"
-                >
-                  {task.title}
-                </Link>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                {task.description}
-              </p>
-              <div className="space-y-3 mb-4">
-                <MemberInfo userId={task.assignerId} label="Assigned by" />
-                <MemberInfo userId={task.assigneeId} label="Assigned to" />
+
+      <div className="space-y-2">
+        {tasks.map((task) => {
+          const assigneeMember = getMember(task.assigneeId);
+          const assigneeInitials = assigneeMember
+            ? `${assigneeMember.firstName[0]}${assigneeMember.lastName[0]}`
+            : task.assigneeId.slice(0, 2).toUpperCase();
+          const assigneeName = assigneeMember
+            ? `${assigneeMember.firstName} ${assigneeMember.lastName}`
+            : task.assigneeId;
+
+          const priorityBadge = getPriorityBadge(task.priority);
+
+          return (
+            <div
+              key={task._id}
+              className="flex items-center justify-between rounded-lg border p-3 text-sm"
+            >
+              <div className="flex items-center gap-3">
+                <Checkbox
+                  id={`task-${task._id}`}
+                  checked={task.isDone}
+                  onCheckedChange={() => handleComplete(task._id)}
+                  disabled={
+                    task.assigneeId !== user?.id && task.assignerId !== user?.id
+                  }
+                />
+                <div>
+                  <label
+                    htmlFor={`task-${task._id}`}
+                    className={`font-medium cursor-pointer ${
+                      task.isDone ? "line-through text-muted-foreground" : ""
+                    }`}
+                  >
+                    {task.title}
+                  </label>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span>Due {formatDueDate(task.dueDate)}</span>
+                    <Badge variant={priorityBadge.variant}>
+                      {priorityBadge.label}
+                    </Badge>
+                  </div>
+                </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Status:
-                </span>
-                <span
-                  className={`text-sm font-medium ${
-                    task.isDone
-                      ? "text-green-600 dark:text-green-400"
-                      : "text-yellow-600 dark:text-yellow-400"
-                  }`}
-                >
-                  {task.isDone ? "Completed" : "Pending"}
-                </span>
+                <Avatar className="h-6 w-6">
+                  <AvatarImage
+                    src={assigneeMember?.imageUrl}
+                    alt={assigneeName}
+                  />
+                  <AvatarFallback className="text-xs">
+                    {assigneeInitials}
+                  </AvatarFallback>
+                </Avatar>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <MoreVertical className="h-4 w-4" />
+                      <span className="sr-only">More options</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link href={`/tasks/${task._id}`}>Edit</Link>
+                    </DropdownMenuItem>
+                    {task.assignerId === user?.id && (
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={() => handleDelete(task._id)}
+                      >
+                        Delete
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
-              <div className="mt-6 flex gap-3">
-                {(task.assignerId === user?.id ||
-                  task.assigneeId === user?.id) && (
-                  <Button
-                    disabled={task.isDone}
-                    onClick={() => handleComplete(task._id)}
-                    className="bg-primary hover:bg-primary/90 text-white font-medium px-4 py-2 rounded-md disabled:opacity-50"
-                  >
-                    Mark Complete
-                  </Button>
-                )}
-                {task.assignerId === user?.id && (
-                  <Button
-                    variant="destructive"
-                    onClick={() => handleDelete(task._id)}
-                    className="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-md"
-                  >
-                    Delete
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+            </div>
+          );
+        })}
       </div>
+
+      {tasks.length === 0 && (
+        <div className="text-center py-8 text-muted-foreground">
+          No tasks found. Create your first task to get started.
+        </div>
+      )}
     </div>
   );
 }

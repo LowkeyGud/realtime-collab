@@ -45,7 +45,8 @@ http.route({
     const eventType = evt.type;
     if (eventType === "user.created") {
       // save the user to convex db
-      const { id, email_addresses, first_name, last_name } = evt.data;
+      const { id, email_addresses, first_name, last_name, image_url } =
+        evt.data;
 
       const email = email_addresses[0].email_address;
       const name = `${first_name || ""} ${last_name || ""}`.trim();
@@ -55,6 +56,7 @@ http.route({
           userId: id,
           email,
           name,
+          imageUrl: image_url || "https://avatar.iran.liara.run/public",
         });
       } catch (error) {
         console.log("Error creating user:", error);

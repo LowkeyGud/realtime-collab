@@ -50,6 +50,7 @@ export default defineSchema({
     userId: v.string(),
     email: v.string(),
     name: v.string(),
+    imageUrl: v.string(),
     isPro: v.boolean(),
     proSince: v.optional(v.number()),
   }).index("by_user_id", ["userId"]),
@@ -114,5 +115,10 @@ export default defineSchema({
     assignerId: v.string(),
     assigneeId: v.string(),
     orgId: v.string(),
+    priority: v.optional(
+      v.union(v.literal("low"), v.literal("medium"), v.literal("high"))
+    ),
+    dueDate: v.optional(v.number()), // Timestamp for due date
+    createdAt: v.number(), // Timestamp for when the task was created
   }).index("by_org", ["orgId"]),
 });

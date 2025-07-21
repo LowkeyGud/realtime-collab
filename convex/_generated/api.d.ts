@@ -22,6 +22,7 @@ import type * as codeUsers from "../codeUsers.js";
 import type * as documents from "../documents.js";
 import type * as http from "../http.js";
 import type * as message from "../message.js";
+import type * as recentDocuments from "../recentDocuments.js";
 import type * as storage from "../storage.js";
 import type * as tasks from "../tasks.js";
 
@@ -43,6 +44,7 @@ declare const fullApi: ApiFromModules<{
   documents: typeof documents;
   http: typeof http;
   message: typeof message;
+  recentDocuments: typeof recentDocuments;
   storage: typeof storage;
   tasks: typeof tasks;
 }>;

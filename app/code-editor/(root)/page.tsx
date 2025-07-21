@@ -56,8 +56,8 @@ export default function NewCodeRoomPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#12121a]">
-      <Card className="w-full max-w-md bg-[#1e1e2e] border-white/[0.05] text-white">
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Code2 className="h-6 w-6" />
@@ -69,7 +69,7 @@ export default function NewCodeRoomPage() {
             <div>
               <label
                 htmlFor="title"
-                className="text-sm font-medium text-gray-300"
+                className="text-sm font-medium text-muted-foreground"
               >
                 Title
               </label>
@@ -78,38 +78,30 @@ export default function NewCodeRoomPage() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter code room title"
-                className="mt-1 bg-[#2a2a3a] border-white/[0.05] text-white placeholder-gray-500"
+                className="mt-1"
               />
             </div>
             <div>
               <label
                 htmlFor="language"
-                className="text-sm font-medium text-gray-300"
+                className="text-sm font-medium text-muted-foreground"
               >
                 Language
               </label>
               <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger className="mt-1 bg-[#2a2a3a] border-white/[0.05] text-white">
+                <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select language" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#2a2a3a] text-white border-white/[0.05]">
+                <SelectContent>
                   {Object.keys(LANGUAGE_CONFIG).map((lang) => (
-                    <SelectItem
-                      key={lang}
-                      value={lang}
-                      className="hover:bg-[#3a3a4a]"
-                    >
+                    <SelectItem key={lang} value={lang}>
                       {LANGUAGE_CONFIG[lang].label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:opacity-90"
-            >
+            <Button type="submit" disabled={isSubmitting} className="w-full">
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

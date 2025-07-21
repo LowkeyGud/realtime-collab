@@ -22,6 +22,10 @@ export const create = mutation({
     description: v.string(),
     assigneeId: v.string(),
     orgId: v.string(),
+    priority: v.optional(
+      v.union(v.literal("low"), v.literal("medium"), v.literal("high"))
+    ),
+    dueDate: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const user = await ctx.auth.getUserIdentity();
@@ -36,6 +40,9 @@ export const create = mutation({
       assignerId: userId!,
       assigneeId: args.assigneeId,
       orgId: args.orgId,
+      priority: args.priority,
+      dueDate: args.dueDate,
+      createdAt: Date.now(),
     });
   },
 });
@@ -72,5 +79,56 @@ export const remove = mutation({
       throw new Error("Only assigner can delete the task");
     }
     await ctx.db.delete(args.id);
+  },
+});
+
+// Update an existing task
+export const update = mutation({
+  args: {
+    id: v.id("tasks"),
+    title: v.optional(v.string()),
+    description: v.optional(v.string()),
+    assigneeId: v.optional(v.string()),
+    priority: v.optional(
+      v.union(v.literal("low"), v.literal("medium"), v.literal("high"))
+    ),
+    dueDate: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.auth.getUserIdentity();
+
+    if (!user) throw new ConvexError("Unauthorized!");
+    const userId = user.subject; // Clerk user ID
+
+    const task = await ctx.db.get(args.id);
+    if (!task) throw new Error("Task not found");
+    if (task.assignerId !== userId) {
+      throw new Error("Only assigner can update the task");
+    }
+
+    const updateData: any = {};
+    if (args.title !== undefined) updateData.title = args.title;
+    if (args.description !== undefined)
+      updateData.description = args.description;
+    if (args.assigneeId !== undefined) updateData.assigneeId = args.assigneeId;
+    if (args.priority !== undefined) updateData.priority = args.priority;
+    if (args.dueDate !== undefined) updateData.dueDate = args.dueDate;
+
+    await ctx.db.patch(args.id, updateData);
+  },
+});
+
+// Get a single task by ID
+export const getById = query({
+  args: { id: v.id("tasks") },
+  handler: async (ctx, args) => {
+    const user = await ctx.auth.getUserIdentity();
+
+    if (!user) throw new ConvexError("Unauthorized!");
+
+    const task = await ctx.db.get(args.id);
+    if (!task) return null;
+
+    return task;
   },
 });

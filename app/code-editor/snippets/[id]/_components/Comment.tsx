@@ -23,17 +23,17 @@ function Comment({
 }: CommentProps) {
   return (
     <div className="group">
-      <div className="bg-[#0a0a0f] rounded-xl p-6 border border-[#ffffff0a] hover:border-[#ffffff14] transition-all">
+      <div className="bg-gray-50 dark:bg-[#0a0a0f] rounded-xl p-6 border border-gray-200 dark:border-[#ffffff0a] hover:border-gray-300 dark:hover:border-[#ffffff14] transition-all">
         <div className="flex items-start sm:items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-[#ffffff08] flex items-center justify-center flex-shrink-0">
-              <UserIcon className="w-4 h-4 text-[#808086]" />
+            <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-[#ffffff08] flex items-center justify-center flex-shrink-0">
+              <UserIcon className="w-4 h-4 text-gray-600 dark:text-[#808086]" />
             </div>
             <div className="min-w-0">
-              <span className="block text-[#e1e1e3] font-medium truncate">
+              <span className="block text-gray-900 dark:text-[#e1e1e3] font-medium truncate">
                 {comment.userName}
               </span>
-              <span className="block text-sm text-[#808086]">
+              <span className="block text-sm text-gray-600 dark:text-[#808086]">
                 {new Date(comment._creationTime).toLocaleDateString()}
               </span>
             </div>

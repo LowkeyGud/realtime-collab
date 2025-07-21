@@ -46,9 +46,9 @@ function Comments({ snippetId }: { snippetId: Id<"codeSnippets"> }) {
   };
 
   return (
-    <div className="bg-[#121218] border border-[#ffffff0a] rounded-2xl overflow-hidden">
-      <div className="px-6 sm:px-8 py-6 border-b border-[#ffffff0a]">
-        <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+    <div className="bg-white dark:bg-[#121218] border border-gray-200 dark:border-[#ffffff0a] rounded-2xl overflow-hidden shadow-sm dark:shadow-none">
+      <div className="px-6 sm:px-8 py-6 border-b border-gray-200 dark:border-[#ffffff0a]">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
           <MessageSquare className="w-5 h-5" />
           Discussion ({comments.length})
         </h2>
@@ -61,8 +61,8 @@ function Comments({ snippetId }: { snippetId: Id<"codeSnippets"> }) {
             isSubmitting={isSubmitting}
           />
         ) : (
-          <div className="bg-[#0a0a0f] rounded-xl p-6 text-center mb-8 border border-[#ffffff0a]">
-            <p className="text-[#808086] mb-4">
+          <div className="bg-gray-50 dark:bg-[#0a0a0f] rounded-xl p-6 text-center mb-8 border border-gray-200 dark:border-[#ffffff0a]">
+            <p className="text-gray-600 dark:text-[#808086] mb-4">
               Sign in to join the discussion
             </p>
             <SignInButton mode="modal">

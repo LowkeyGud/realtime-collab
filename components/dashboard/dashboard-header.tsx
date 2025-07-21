@@ -18,7 +18,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { OrganizationSwitcher, useAuth, useUser } from "@clerk/nextjs";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import {
   Bell,
@@ -97,6 +97,14 @@ export function DashboardHeader() {
           <MessageSquare className="h-5 w-5" />
         </Button>
         <ThemeToggle />
+        <OrganizationSwitcher
+          appearance={{
+            elements: {
+              organizationSwitcherTrigger:
+                "border-0 shadow-none bg-transparent hover:bg-accent",
+            },
+          }}
+        />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full">

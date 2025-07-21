@@ -1,16 +1,16 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   CheckSquare,
+  ChevronLeft,
+  ChevronRight,
   Code,
   FileText,
-  HelpCircle,
   Layers,
   LayoutDashboard,
   MessageSquare,
-  Settings,
-  Sun,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -18,9 +18,15 @@ import { usePathname } from "next/navigation";
 
 interface DashboardNavProps {
   className?: string;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
-export function DashboardNav({ className }: DashboardNavProps) {
+export function DashboardNav({
+  className,
+  isCollapsed = false,
+  onToggleCollapse,
+}: DashboardNavProps) {
   const pathname = usePathname();
 
   const navItems = [
@@ -36,7 +42,7 @@ export function DashboardNav({ className }: DashboardNavProps) {
     },
     {
       title: "Code Editor",
-      href: "/code-editor",
+      href: "/code-editor/snippets",
       icon: <Code className="h-5 w-5" />,
     },
     {
@@ -63,7 +69,32 @@ export function DashboardNav({ className }: DashboardNavProps) {
   ];
 
   return (
-    <nav className={cn("flex flex-col gap-2", className)}>
+    <nav
+      className={cn(
+        "flex flex-col gap-2 transition-all duration-300",
+        isCollapsed ? "w-16" : "w-64",
+        className
+      )}
+    >
+      <div
+        className={cn(
+          "flex items-center mb-4",
+          isCollapsed ? "justify-center" : "justify-between"
+        )}
+      >
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onToggleCollapse}
+          className="h-8 w-8"
+        >
+          {isCollapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
+        </Button>
+      </div>
       {navItems.map((item) => (
         <Link
           key={item.href}
@@ -72,46 +103,15 @@ export function DashboardNav({ className }: DashboardNavProps) {
             "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
             pathname === item.href
               ? "bg-primary text-primary-foreground"
-              : "hover:bg-muted"
+              : "hover:bg-muted",
+            isCollapsed && "justify-center"
           )}
+          title={isCollapsed ? item.title : undefined}
         >
           {item.icon}
-          {item.title}
+          {!isCollapsed && item.title}
         </Link>
       ))}
-      <div className="mt-auto pt-4">
-        <Link
-          href="/dashboard/settings"
-          className={cn(
-            "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-            pathname === "/dashboard/settings"
-              ? "bg-primary text-primary-foreground"
-              : "hover:bg-muted"
-          )}
-        >
-          <Settings className="h-5 w-5" />
-          <span>Settings</span>
-        </Link>
-        <Link
-          href="/dashboard/settings/theme"
-          className={cn(
-            "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-            pathname === "/dashboard/settings/theme"
-              ? "bg-primary text-primary-foreground"
-              : "hover:bg-muted"
-          )}
-        >
-          <Sun className="h-5 w-5" />
-          <span>Theme</span>
-        </Link>
-        <Link
-          href="/dashboard/help"
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-muted"
-        >
-          <HelpCircle className="h-5 w-5" />
-          <span>Help & Support</span>
-        </Link>
-      </div>
     </nav>
   );
 }

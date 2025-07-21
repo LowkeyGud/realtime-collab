@@ -7,6 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { api } from "@/convex/_generated/api";
+import { useOrganization } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
 import { FileCode, FileText, Layers, MoreVertical } from "lucide-react";
 import Link from "next/link";
 
@@ -15,74 +18,53 @@ interface RecentDocumentsProps {
 }
 
 export function RecentDocuments({ showAll = false }: RecentDocumentsProps) {
-  // Mock data for recent documents
-  const documents = [
-    {
-      id: "doc1",
-      title: "Project Roadmap",
-      type: "document",
-      updatedAt: "2 hours ago",
-      updatedBy: {
-        name: "Alex Johnson",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "AJ",
-      },
-    },
-    {
-      id: "doc2",
-      title: "Meeting Notes - April 15",
-      type: "document",
-      updatedAt: "Yesterday",
-      updatedBy: {
-        name: "Sarah Miller",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "SM",
-      },
-    },
-    {
-      id: "doc3",
-      title: "Product Requirements",
-      type: "document",
-      updatedAt: "2 days ago",
-      updatedBy: {
-        name: "John Doe",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "JD",
-      },
-    },
-    {
-      id: "doc4",
-      title: "Authentication Service",
-      type: "code",
-      updatedAt: "3 days ago",
-      updatedBy: {
-        name: "Emily Chen",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "EC",
-      },
-    },
-    {
-      id: "doc5",
-      title: "UI Design Mockups",
-      type: "whiteboard",
-      updatedAt: "5 days ago",
-      updatedBy: {
-        name: "Michael Brown",
-        avatar: "/placeholder.svg?height=32&width=32",
-        initials: "MB",
-      },
-    },
-  ];
+  const { organization } = useOrganization();
+  const documents = useQuery(api.recentDocuments.getRecentDocuments, {
+    orgId: organization?.id,
+    limit: showAll ? 20 : 4,
+  });
 
-  // Show more documents if showAll is true
-  const displayDocuments = showAll ? documents : documents.slice(0, 4);
+  if (!documents) {
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between rounded-lg border p-3 text-sm"
+            >
+              <div className="flex items-center gap-3">
+                <div className="h-5 w-5 animate-pulse bg-gray-200 rounded" />
+                <div className="space-y-1">
+                  <div className="h-4 w-32 animate-pulse bg-gray-200 rounded" />
+                  <div className="h-3 w-24 animate-pulse bg-gray-200 rounded" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const formatRelativeTime = (timestamp: number) => {
+    const now = Date.now();
+    const diff = now - timestamp;
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (hours < 1) return "Less than an hour ago";
+    if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+    if (days === 1) return "Yesterday";
+    return `${days} days ago`;
+  };
 
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        {displayDocuments.map((doc) => (
+        {documents.map((doc) => (
           <div
-            key={doc.id}
+            key={doc._id}
             className="flex items-center justify-between rounded-lg border p-3 text-sm"
           >
             <div className="flex items-center gap-3">
@@ -103,13 +85,13 @@ export function RecentDocuments({ showAll = false }: RecentDocumentsProps) {
                       : doc.type === "whiteboard"
                         ? "whiteboard"
                         : "documents"
-                  }/${doc.id}`}
+                  }/${doc._id}`}
                   className="font-medium hover:underline"
                 >
                   {doc.title}
                 </Link>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <span>Updated {doc.updatedAt}</span>
+                  <span>Updated {formatRelativeTime(doc.updatedAt)}</span>
                   <span>•</span>
                   <span>by {doc.updatedBy.name}</span>
                 </div>
