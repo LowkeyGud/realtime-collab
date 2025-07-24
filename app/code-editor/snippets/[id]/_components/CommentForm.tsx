@@ -16,7 +16,8 @@ function CommentForm({ isSubmitting, onSubmit }: CommentFormProps) {
       e.preventDefault();
       const start = e.currentTarget.selectionStart;
       const end = e.currentTarget.selectionEnd;
-      const newComment = comment.substring(0, start) + "  " + comment.substring(end);
+      const newComment =
+        comment.substring(0, start) + "  " + comment.substring(end);
       setComment(newComment);
       e.currentTarget.selectionStart = e.currentTarget.selectionEnd = start + 2;
     }

@@ -1,4 +1,5 @@
 "use client";
+import { generateSummaryAction } from "@/app/actions/ai-summary";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { api } from "@/convex/_generated/api";
 import { useOrganization, useUser } from "@clerk/nextjs";
@@ -31,7 +32,44 @@ export default function ChatPage({ params }: ChatPageProps) {
   const [isSending, setIsSending] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
+  const [aiSummaryExpanded, setAiSummaryExpanded] = useState(false);
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
+  const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const messageEndRef = useRef<HTMLDivElement>(null);
+
+  // Generate AI summary when messages change
+  useEffect(() => {
+    const generateSummary = async () => {
+      if (!messages || messages.length < 5) {
+        setAiSummary(null);
+        return;
+      }
+
+      setIsLoadingSummary(true);
+      try {
+        const summary = await generateSummaryAction(
+          messages.map((msg) => ({
+            username: msg.username,
+            body: msg.body,
+            _creationTime: msg._creationTime,
+          }))
+        );
+        setAiSummary(summary);
+        if (summary) {
+          setAiSummaryExpanded(true);
+        }
+      } catch (error) {
+        console.error("Error generating summary:", error);
+        setAiSummary(null);
+      } finally {
+        setIsLoadingSummary(false);
+      }
+    };
+
+    // Debounce summary generation
+    const timeoutId = setTimeout(generateSummary, 2000);
+    return () => clearTimeout(timeoutId);
+  }, [messages]);
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -101,7 +139,62 @@ export default function ChatPage({ params }: ChatPageProps) {
 
   return (
     <div className="bg-background text-foreground relative h-[calc(100vh-4rem)]">
-      <div className="absolute inset-0 pb-20 overflow-y-auto p-4 space-y-4">
+      {/* AI Summary Section */}
+      {(aiSummary || isLoadingSummary) && (
+        <div className="border-b border-border bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 relative z-10">
+          <div className="p-4">
+            <button
+              onClick={() => setAiSummaryExpanded(!aiSummaryExpanded)}
+              className="flex items-center justify-between w-full text-left hover:bg-black/5 dark:hover:bg-white/5 rounded-lg p-2 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                  {isLoadingSummary ? (
+                    <div className="animate-spin rounded-full h-3 w-3 border border-white border-t-transparent"></div>
+                  ) : (
+                    <svg
+                      className="w-3 h-3 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  )}
+                </div>
+                <span className="font-medium text-sm text-foreground">
+                  {isLoadingSummary ? "Generating AI Summary..." : "AI Summary"}
+                </span>
+              </div>
+              <svg
+                className={`w-4 h-4 text-muted-foreground transition-transform ${
+                  aiSummaryExpanded ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+            {aiSummaryExpanded && aiSummary && (
+              <div className="mt-2 p-3 bg-white/50 dark:bg-black/20 rounded-lg border border-border/50">
+                <p className="text-sm text-foreground/80 leading-relaxed">
+                  {aiSummary}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div
+        className={`absolute inset-0 ${aiSummary || isLoadingSummary ? "pt-[80px]" : "pt-4"} pb-20 overflow-y-auto p-4 space-y-4`}
+      >
         {messages?.map((msg) => (
           <div
             key={msg._id}
