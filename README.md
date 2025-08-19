@@ -220,3 +220,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <div align="center">
   <strong>Built with ❤️ for modern collaborative teams</strong>
 </div>
+
+## Contributors
+- - [@Surajj042](https://github.com/Surajj042) (Suraj Gurung)
+- - [@LowkeyGud](https://github.com/LowkeyGud) (Chandramani Regmi)
+
+This project was built in collaboration.
